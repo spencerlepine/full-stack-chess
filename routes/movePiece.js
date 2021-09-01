@@ -9,11 +9,14 @@ router.post('/:gameID', function (req, res) {
 
   if (thisGameID && gameHandler.allGameInstances[thisGameID] !== undefined) {
     const thisGame = gameHandler.allGameInstances[thisGameID];
-    gameHandler.movePiece(fromRow, fromCol, toRow, toCol, pieceStr, (err) => {
+    thisGame.movePiece(fromRow, fromCol, toRow, toCol, pieceStr, (err) => {
       if (err) {
         res.status(404);
         res.end("Could not place piece :O");
       } else {
+        console.log('moved piece to', toRow, toCol, pieceStr);
+        console.log(thisGame.gameStatus);
+        thisGame.gameStatus.lastMovePlayer = thisGame.gameStatus.lastMovePlayer === 'black' ? 'white' : 'black';
         res.status(201);
         res.end();
       }

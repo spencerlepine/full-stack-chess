@@ -14,7 +14,7 @@ const pieceImages = {
 };
 
 const boardView = {
-  renderCell: (r, c, boardModel) => {
+  renderCell: (r, c, boardModel, boardView) => {
     const cellValue = boardModel.boardMatrix[r][c];
     const cellElem = document.getElementById(`cell-${(r * 8) + c}`);
     cellElem.innerHTML = '';
@@ -23,13 +23,16 @@ const boardView = {
       const newImgElem = document.createElement('img');
       newImgElem.src = pieceImages[cellValue];
       newImgElem.setAttribute('class', 'playerPiece');
+      newImgElem.setAttribute('piece', cellValue);
+      boardController.handleCellClick(newImgElem, boardModel, boardView)
+
       cellElem.appendChild(newImgElem);
     }
   },
   renderBoard: (boardModel, boardView) => {
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
-        boardView.renderCell(r, c, boardModel);
+        boardView.renderCell(r, c, boardModel, boardView);
       }
     }
   },
@@ -38,7 +41,6 @@ const boardView = {
     indicatorElem.innerText = boardModel.lastPlayerPiece === 'black' ? 'white' : 'black';
   },
   rotateBoardFromColor: (boardModel) => {
-    console.log(boardModel.gameInstance.color)
     if (boardModel.gameInstance.color === 'black') {
       const boardDiv = document.getElementById('gameboard');
       boardDiv.setAttribute('class', 'gameboardIsBlack');

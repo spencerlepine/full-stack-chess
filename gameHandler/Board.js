@@ -20,6 +20,8 @@ class Board {
     const validMove = true; // TODO
 
     if (validMove) {
+      this.boardMatrix[fromRow][fromCol] = '';
+      this.boardMatrix[toRow][toCol] = pieceStr;
       callback();
     } else {
       callback("Could not place piece");

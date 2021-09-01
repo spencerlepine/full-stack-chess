@@ -2,7 +2,9 @@ import GameInstance from './GameInstance.js';
 
 class GameHandler {
   constructor() {
-    this.allGameInstances = {};
+    this.allGameInstances = {
+      'test': new GameInstance(),
+    };
   }
 
   startGameInstance = (gameID) => {

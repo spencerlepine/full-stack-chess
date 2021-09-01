@@ -1,21 +1,69 @@
-const boardController = {
-  handleCellClick: (e, boardModel, boardView) => {
+function dragElement(elmnt, boardModel, boardView) {
+  let fromRow;
+  let fromCol;
+  let pieceStr;
+
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  if (document.getElementById(elmnt.id + "header")) {
+    // if present, the header is where you move the DIV from:
+    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+  } else {
+    // otherwise, move the DIV from anywhere inside the DIV:
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    if (boardModel.isCurrentPlayerTurn(boardModel)) {
+      return;
+    }
+
+    e = e || window.event;
     e.preventDefault();
-    // Get the FROM column
-    // Get the FROM row
-    // Get the pieceStr
-    // Get the to COL
-    // Get the to ROW
-    console.log("CLICKED CELL // controller/board.js")
 
-    // const fromC = parseInt(e.target.getAttribute('row'));
-    // const fromC = parseInt(e.target.getAttribute('col'));
-    // const piece = parseInt(e.target.getAttribute('col'));
+    // Set the board coordinates of the move
+    fromRow = e.target.parentNode.getAttribute('row');
+    fromCol = e.target.parentNode.getAttribute('col');
+    pieceStr = e.target.getAttribute('piece');
 
-    // if (!isNaN(r) && !isNaN(c) && boardModel.gameStatus.lastMovePlayer !== boardModel.gameInstance.color) {
-    //   if (boardModel.gameStatus.gameIsActive) {
-    //     boardModel.attemptToMakeMove(r, c, boardModel, boardView);
-    //   }
-    // }
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement(e) {
+    console.log(e.target.getAttribute('col'), e.target.getAttribute('row'))
+    let toRow = e.target.getAttribute('row');
+    let toCol = e.target.getAttribute('col');
+    if (fromRow && fromCol && toRow && toCol && pieceStr) {
+      boardModel.attemptToMakeMove(fromRow, fromCol, toRow, toCol, pieceStr, boardModel, boardView);
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+}
+
+const boardController = {
+  handleCellClick: (elmnt, boardModel, boardView) => {
+    elmnt.ondragstart = function () {
+      return false;
+    };
+
+    dragElement(elmnt, boardModel, boardView);
   },
 };

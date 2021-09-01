@@ -2,6 +2,7 @@ const initializeGame = (boardModel, boardController, boardView) => {
   // Attatch the event listener to the RESET button
   const resetBtn = document.getElementById('resetBtn');
   resetBtn.addEventListener('click', () => boardModel.resetGameInstance(boardModel, boardView, () => {
+    console.log('resetting the game')
     initializeGame(boardModel, boardController, boardView)
   }));
 
@@ -22,16 +23,11 @@ const initializeGame = (boardModel, boardController, boardView) => {
   boardModel.fetchGameStatus(boardModel, boardView);
   boardModel.fetchGameboard(boardModel, boardView);
   setInterval(() => {
-    if (boardModel.gameIsActive) {
+    if (!boardModel.isCurrentPlayerTurn(boardModel)) {
+      boardModel.fetchGameboard(boardModel, boardView);
       boardModel.fetchGameStatus(boardModel, boardView);
     }
-    boardModel.fetchGameboard(boardModel, boardView);
-  }, 2000);
-
-  const cells = document.querySelectorAll('.boardCell');
-  for (const cell of cells) {
-    cell.addEventListener('click', (e) => boardController.handleCellClick(e, boardModel, boardView));
-  }
+  }, 1000);
 };
 
 window.onload = function () {

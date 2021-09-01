@@ -40,15 +40,19 @@ const chooseUsername = (boardModel) => {
 
 const boardModel = {
   gameInstance: {
-    gameID: null,
-    username: null,
-    color: null,
+    gameID: 'test',
+    username: 'spencer',
+    color: 'black',
   },
   boardMatrix: generatePlaceholderBoard(),
   gameStatus: {
     isGameActive: false,
-    lastMovePlayer: 'black',
+    lastMovePlayer: 'white',
     winningPlayer: '',
+  },
+
+  isCurrentPlayerTurn: (boardModel) => {
+    return boardModel.gameStatus.lastMovePlayer !== boardModel.gameInstance.color;
   },
 
   setGameboard: (boardModel, newBoard) => boardModel.boardMatrix = newBoard,
@@ -64,7 +68,6 @@ const boardModel = {
         }
 
         boardModel.initializeInstance(boardModel, boardView);
-
         boardModel.fetchGameStatus(boardModel);
         boardModel.fetchGameboard(boardModel);
       }, (error) => {
@@ -127,7 +130,7 @@ const boardModel = {
       pieceStr,
     })
       .then((response) => {
-        boardModel.fetchGameboard(boardModel);
+        boardModel.fetchGameboard(boardModel, boardView);
         boardModel.fetchGameStatus(boardModel, boardView);
       }, (error) => {
         console.log(error);
