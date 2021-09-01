@@ -7,7 +7,6 @@ router.get('/:gameID', function (req, res) {
   const thisGameID = req.params['gameID'];
   if (thisGameID) {
     if (gameHandler.allGameInstances[thisGameID] === undefined) {
-      console.log('creating game instance', thisGameID);
       gameHandler.startGameInstance(thisGameID);
     }
     const gameboardData = JSON.stringify(gameHandler.allGameInstances[thisGameID].gameboard);

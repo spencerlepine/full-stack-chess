@@ -1,9 +1,4 @@
 const generateStarterBoard = () => {
-  // const outputBoard = [];
-  // for (let i = 0; i < 8; i++) {
-  //   outputBoard.push(['', '', '', '', '', '', '', '']);
-  // }
-  // return outputBoard;
   return [
     ['br', 'bn', 'bb', 'bq', 'bk', 'bb', 'bn', 'br'],
     ['bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp'],

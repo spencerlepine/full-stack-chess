@@ -6,7 +6,7 @@ const generatePlaceholderBoard = () => {
   return outputBoard;
 }
 
-const chooseColor = (boardModel) => {
+const chooseColor = (boardModel, callback = () => { }) => {
   let choice = null;
   while (!(choice === 'black' || choice === 'white')) {
     choice = prompt('Choose your letter to play: "Black" or "White"').toLowerCase();
@@ -19,6 +19,7 @@ const chooseColor = (boardModel) => {
   });
 
   boardModel.gameInstance.color = choice;
+  callback();
 }
 
 const chooseGameID = (boardModel) => {
@@ -50,7 +51,7 @@ const boardModel = {
     winningPlayer: '',
   },
 
-  setGameboard: (boardModel, newBoard) => boardModel.gameboard = newBoard,
+  setGameboard: (boardModel, newBoard) => boardModel.boardMatrix = newBoard,
 
   resetGameInstance: (boardModel, boardView, callback) => {
     axios.post('/games/syncGameStatus/restartGame/' + boardModel.gameInstance.gameID)
@@ -76,32 +77,30 @@ const boardModel = {
       chooseGameID(boardModel);
       boardModel.fetchGameboard(boardModel, boardView, () => {
         chooseUsername(boardModel);
-        chooseColor(boardModel);
+        chooseColor(boardModel, () => boardView.rotateBoardFromColor(boardModel));
       });
     }
   },
 
   fetchGameStatus: (boardModel, boardView, optionalCallback = () => { }) => {
-    if (boardModel.gameInstance.gameID === null) {
-      boardModel.initializeInstance(boardModel, boardView);
-    }
+    if (boardModel.gameInstance.gameID !== null) {
+      axios.get('/games/syncGameStatus/' + boardModel.gameInstance.gameID)
+        .then((response) => {
+          optionalCallback();
+          boardModel.gameStatus = response.data;
+          boardView.renderPlayerIndicator(boardModel, boardView);
 
-    axios.get('/games/syncGameStatus/' + boardModel.gameInstance.gameID)
-      .then((response) => {
-        optionalCallback();
-        boardModel.gameStatus = response.data;
-        boardView.renderPlayerIndicator(boardModel, boardView);
-
-        if (response.data.isGameActive === false) {
-          if (winningPlayer) {
-            alert(winningPlayer.toUpperCase() + ' wins the game! Click (reset) to play again');
-          } else {
-            alert('Game is a draw. Click (reset) to play again')
+          if (response.data.isGameActive === false) {
+            if (winningPlayer) {
+              alert(winningPlayer.toUpperCase() + ' wins the game! Click (reset) to play again');
+            } else {
+              alert('Game is a draw. Click (reset) to play again')
+            }
           }
-        }
-      }, (error) => {
-        console.log(error);
-      });
+        }, (error) => {
+          console.log(error);
+        });
+    }
   },
 
   fetchGameboard: (boardModel, boardView, optionalCallback = () => { }) => {
@@ -112,8 +111,8 @@ const boardModel = {
     axios.get('/games/syncBoard/' + boardModel.gameInstance.gameID)
       .then((response) => {
         optionalCallback();
-        boardModel.setGameboard(boardModel, response.data);
-        boardView.renderBoard(boardModel);
+        boardModel.setGameboard(boardModel, response.data.boardMatrix);
+        boardView.renderBoard(boardModel, boardView);
       }, (error) => {
         console.log(error);
       });

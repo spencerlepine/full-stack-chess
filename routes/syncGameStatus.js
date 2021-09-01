@@ -16,7 +16,6 @@ router.get('/:gameID', function (req, res) {
   }
 });
 
-
 router.post('/restartGame/:gameID', function (req, res) {
   const thisGameID = req.params['gameID'];
 

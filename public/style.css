@@ -10,7 +10,6 @@
   flex-grow: 1;
   width: 12.5%;
   height: 12.5%;
-  font-size: 8em;
 }
 
 .lightCell {
@@ -21,7 +20,17 @@
   background-color: rgb(25 162 5);
 }
 
+.gameboardIsBlack  {
+  transform: rotate(180deg);
+}
+
+.gameboardIsBlack .boardCell {
+  transform: scaleY(-1);
+}
+
 .playerPiece {
+  height: 2em;
+  width: 2em;
   padding: 0;
   margin: 0;
   position: absolute;
