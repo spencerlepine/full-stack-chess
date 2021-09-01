@@ -1,0 +1,40 @@
+#gameboard {
+  width: 400px;
+  height: 400px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.boardCell {
+  position: relative;
+  flex-grow: 1;
+  width: 33%;
+  height: 33%;
+  font-size: 8em;
+}
+
+.boardCell:nth-child(even) {
+  background-color: rgb(220, 220, 220);
+}
+
+.boardCell:nth-child(odd) {
+  background-color: rgb(179, 179, 179);
+}
+
+.playerPiece {
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.o {
+  color: rgb(206, 28, 28);
+}
+
+.x {
+  color: rgb(38, 58, 205);
+}

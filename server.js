@@ -15,7 +15,7 @@ function errorHandler(err, req, res, next) {
 
 app.use(express.static('public'));
 app.use(express.json());
-app.use(routes);
+app.use('/games', routes);
 app.use(errorHandler);
 
 app.listen(port, () => {

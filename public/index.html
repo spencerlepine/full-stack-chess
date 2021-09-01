@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>Chess</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+
+  <body>
+    <h1>Chess</h1>
+
+    <div id="gameboard">
+    </div>
+
+    <p>Current Player: <span id="currentPlayerIndicator"></span></p>
+
+    <button id="resetBtn">Restart Game</button>
+
+    <footer>@spencerlepine</footer>
+
+    <script src="./model/board.js"></script>
+    <script src="./controller/board.js"></script>
+    <script src="./view/board.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
