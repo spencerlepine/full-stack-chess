@@ -14,9 +14,9 @@ class GameInstance {
     }
   }
 
-  claimColor = (username, color, callback) => {
-    if (this.claimColor[color] === null || this.claimColor[color] === username) {
-      this.claimColor[color] = username;
+  claimColor = (color, callback) => {
+    if (this.claimedColors[color] === null) {
+      this.claimedColors[color] = 'taken';
       callback();
     } else {
       callback("Could not claim color");

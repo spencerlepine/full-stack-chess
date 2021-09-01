@@ -8,17 +8,17 @@
 .boardCell {
   position: relative;
   flex-grow: 1;
-  width: 33%;
-  height: 33%;
+  width: 12.5%;
+  height: 12.5%;
   font-size: 8em;
 }
 
-.boardCell:nth-child(even) {
-  background-color: rgb(220, 220, 220);
+.lightCell {
+  background-color: rgb(223, 223, 223);
 }
 
-.boardCell:nth-child(odd) {
-  background-color: rgb(179, 179, 179);
+.darkCell {
+  background-color: rgb(25 162 5);
 }
 
 .playerPiece {

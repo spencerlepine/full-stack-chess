@@ -10,8 +10,6 @@ const boardView = {
     cellElem.appendChild(newTextNode);
   },
   renderBoard: (boardModel) => {
-    const boardDiv = document.getElementById('gameboard');
-    boardDiv.innerHTML = '';
     for (let r = 0; r < 8; r++) {
       for (let c = 0; c < 8; c++) {
         boardView.renderCell(r, c, boardModel);

@@ -10,39 +10,40 @@ const chooseColor = (boardModel) => {
   let choice = null;
   while (!(choice === 'black' || choice === 'white')) {
     choice = prompt('Choose your letter to play: "Black" or "White"').toLowerCase();
-
-    attemptToMakeMove(boardModel.gameInstance.username, choice, (validChoice) => {
-      if (!validChoice) {
-        choice = null;
-      }
-    });
   }
-  return choice;
+
+  boardModel.attemptToClaimColor(choice, boardModel, (validChoice) => {
+    if (!validChoice) {
+      chooseColor(boardModel);
+    }
+  });
+
+  boardModel.gameInstance.color = choice;
 }
 
-const chooseGameID = () => {
+const chooseGameID = (boardModel) => {
   let choice = null;
   while (typeof choice !== 'string') {
     choice = prompt('Enter the gameID: (type unique ID to START a new game)').toLowerCase();
   }
-  return choice;
+  boardModel.gameInstance.gameID = choice;
 }
 
-const chooseUsername = () => {
+const chooseUsername = (boardModel) => {
   let choice = null;
   while (typeof choice !== 'string') {
     choice = prompt('Type your username:').toLowerCase();
   }
-  return choice;
+  boardModel.gameInstance.username = choice;
 }
 
 const boardModel = {
   gameInstance: {
-    gameID: chooseGameID(),
-    username: chooseUsername(),
-    color: chooseColor(boardModel),
+    gameID: null,
+    username: null,
+    color: null,
   },
-  gameboard: generatePlaceholderBoard(),
+  boardMatrix: generatePlaceholderBoard(),
   gameStatus: {
     isGameActive: false,
     lastMovePlayer: 'black',
@@ -51,7 +52,7 @@ const boardModel = {
 
   setGameboard: (boardModel, newBoard) => boardModel.gameboard = newBoard,
 
-  resetGameInstance: (boardModel, callback) => {
+  resetGameInstance: (boardModel, boardView, callback) => {
     axios.post('/games/syncGameStatus/restartGame/' + boardModel.gameInstance.gameID)
       .then((response) => {
         callback();
@@ -61,24 +62,33 @@ const boardModel = {
           winningPlayer: '',
         }
 
-        boardModel.gameInstance = {
-          gameInstance: {
-            gameID: chooseGameID(),
-            username: chooseUsername(),
-            color: chooseColor(),
-          }
-        }
+        boardModel.initializeInstance(boardModel, boardView);
 
         boardModel.fetchGameStatus(boardModel);
         boardModel.fetchGameboard(boardModel);
       }, (error) => {
         console.log(error);
       });
-  }
+  },
 
-  fetchGameStatus: (boardModel, boardView) => {
+  initializeInstance: (boardModel, boardView) => {
+    if (boardModel.gameInstance.username === null) {
+      chooseGameID(boardModel);
+      boardModel.fetchGameboard(boardModel, boardView, () => {
+        chooseUsername(boardModel);
+        chooseColor(boardModel);
+      });
+    }
+  },
+
+  fetchGameStatus: (boardModel, boardView, optionalCallback = () => { }) => {
+    if (boardModel.gameInstance.gameID === null) {
+      boardModel.initializeInstance(boardModel, boardView);
+    }
+
     axios.get('/games/syncGameStatus/' + boardModel.gameInstance.gameID)
       .then((response) => {
+        optionalCallback();
         boardModel.gameStatus = response.data;
         boardView.renderPlayerIndicator(boardModel, boardView);
 
@@ -94,9 +104,14 @@ const boardModel = {
       });
   },
 
-  fetchGameboard: (boardModel, boardView) => {
+  fetchGameboard: (boardModel, boardView, optionalCallback = () => { }) => {
+    if (boardModel.gameInstance.gameID === null) {
+      boardModel.initializeInstance(boardModel, boardView);
+    }
+
     axios.get('/games/syncBoard/' + boardModel.gameInstance.gameID)
       .then((response) => {
+        optionalCallback();
         boardModel.setGameboard(boardModel, response.data);
         boardView.renderBoard(boardModel);
       }, (error) => {
@@ -120,9 +135,8 @@ const boardModel = {
       });
   },
 
-  attemptToMakeMove: async (username, color, callback) => {
+  attemptToClaimColor: async (color, boardModel, callback) => {
     await axios.post('/games/claimColor/' + boardModel.gameInstance.gameID, {
-      username,
       color,
     })
       .then((response) => {

@@ -5,11 +5,11 @@ var router = express.Router();
 
 router.post('/:gameID', function (req, res) {
   const thisGameID = req.params['gameID'];
-  const { color, username } = req.body;
+  const { color } = req.body;
 
   if (thisGameID && gameHandler.allGameInstances[thisGameID] !== undefined) {
     const thisGame = gameHandler.allGameInstances[thisGameID];
-    gameHandler.claimColor(username, color, (err) => {
+    gameHandler.allGameInstances[thisGameID].claimColor(color, (err) => {
       if (err) {
         res.status(404);
         res.end("Could not place piece :O");

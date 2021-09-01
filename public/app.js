@@ -1,7 +1,7 @@
 const initializeGame = (boardModel, boardController, boardView) => {
   // Attatch the event listener to the RESET button
   const resetBtn = document.getElementById('resetBtn');
-  resetBtn.addEventListener('click', () => boardModel.resetGameInstance(boardModel, () => {
+  resetBtn.addEventListener('click', () => boardModel.resetGameInstance(boardModel, boardView, () => {
     initializeGame(boardModel, boardController, boardView)
   }));
 
@@ -12,7 +12,7 @@ const initializeGame = (boardModel, boardController, boardView) => {
     for (let c = 0; c < 8; c++) {
       let cellElem = document.createElement('div');
       cellElem.setAttribute('id', `cell-${(r * 8) + c}`);
-      cellElem.setAttribute('class', 'boardCell');
+      cellElem.setAttribute('class', 'boardCell ' + ((c + (r % 2)) % 2 === 0 ? 'lightCell' : 'darkCell'));
       cellElem.setAttribute('row', r);
       cellElem.setAttribute('col', c);
       boardDiv.appendChild(cellElem);
@@ -20,12 +20,12 @@ const initializeGame = (boardModel, boardController, boardView) => {
   }
 
   boardModel.fetchGameStatus(boardModel, boardView);
-  boardModel.fetchGameboard(boardModel);
+  boardModel.fetchGameboard(boardModel, boardView);
   setInterval(() => {
     if (boardModel.gameIsActive) {
       boardModel.fetchGameStatus(boardModel, boardView);
     }
-    boardModel.fetchGameboard(boardModel);
+    boardModel.fetchGameboard(boardModel, boardView);
   }, 2000);
 
   const cells = document.querySelectorAll('.boardCell');
@@ -34,6 +34,6 @@ const initializeGame = (boardModel, boardController, boardView) => {
   }
 };
 
-window.document.onload = function (e) {
+window.onload = function () {
   initializeGame(boardModel, boardController, boardView);
-}
+};
